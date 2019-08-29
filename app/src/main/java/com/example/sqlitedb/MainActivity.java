@@ -90,9 +90,11 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnmodify:
-                if(editRollno.getText().toString().trim().length()==0)
+                if(editRollno.getText().toString().trim().length() == 0 ||
+                        editName.getText().toString().trim().length() == 0 ||
+                        editMarks.getText().toString().trim().length() == 0)
                 {
-                    shwmsg("Error", "Please enter Rollno");
+                    shwmsg("Error", "Error");
                     return;
                 }
                 Cursor c1=db.rawQuery("SELECT * FROM student WHERE rollno='"+editRollno.getText()+"'", null);
