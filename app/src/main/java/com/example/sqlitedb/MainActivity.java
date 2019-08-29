@@ -60,35 +60,105 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                         shwmsg("Error", "Invalid Input");
                         return;
                     }
+                    db.execSQL("INSERT INTO student VALUES('"+editRollno.getText()+"','"+editName.getText()+
+                            "','"+editMarks.getText()+"');");
+                    shwmsg("Success", "Record added");
                     clearText();
                 }
                 Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.btndelete:
+                if(editRollno.getText().toString().trim().length()==0)
+                {
+                    shwmsg("Error", "Please enter Rollno");
+                    return;
+                }
+                Cursor c=db.rawQuery("SELECT * FROM student WHERE rollno='"+editRollno.getText()+"'", null);
+                if(c.moveToFirst())
+                {
+                    db.execSQL("DELETE FROM student WHERE rollno='"+editRollno.getText()+"'");
+                    shwmsg("Success", "Record Deleted");
+                }
+                else
+                {
+                    shwmsg("Error", "Invalid Rollno");
+                }
+                clearText();
+
 
                 Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnmodify:
+                if(editRollno.getText().toString().trim().length()==0)
+                {
+                    shwmsg("Error", "Please enter Rollno");
+                    return;
+                }
+                Cursor c1=db.rawQuery("SELECT * FROM student WHERE rollno='"+editRollno.getText()+"'", null);
+                if(c1.moveToFirst())
+                {
+                    db.execSQL("UPDATE student SET name='"+editName.getText()+"',marks='"+editMarks.getText()+
+                            "' WHERE rollno='"+editRollno.getText()+"'");
+                    shwmsg("Success", "Record Modified");
+                }
+                else
+                {
+                    shwmsg("Error", "Invalid Rollno");
+                }
+                clearText();
+
 
                 Toast.makeText(this, "Modify", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.btnview:
+                if(editRollno.getText().toString().trim().length()==0)
+                {
+                    shwmsg("Error", "Please enter Rollno");
+                    return;
+                }
+                Cursor c2=db.rawQuery("SELECT * FROM student WHERE rollno='"+editRollno.getText()+"'", null);
+                if(c2.moveToFirst())
+                {
+                    editName.setText(c2.getString(1));
+                    editMarks.setText(c2.getString(2));
+                }
+                else {
+                    shwmsg("Error", "Invalid Rollno");
+                    clearText();
+                }
                 Toast.makeText(this, "View", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.btnviewall:
+                Cursor c3=db.rawQuery("SELECT * FROM student", null);
+                if(c3.getCount()==0)
+                {
+                    shwmsg("Error", "No records found");
+                    return;
+                }
+                StringBuffer buffer=new StringBuffer();
+                while(c3.moveToNext())
+                {
+                    buffer.append("Rollno: "+c3.getString(0)+"\n");
+                    buffer.append("Name: "+c3.getString(1)+"\n");
+                    buffer.append("Marks: "+c3.getString(2)+"\n\n");
+                }
+                shwmsg("Student Details", buffer.toString());
+
                 Toast.makeText(this, "View All", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.btnshow:
                 Toast.makeText(this, "Show", Toast.LENGTH_SHORT).show();
+                shwmsg("Developed By-","Mr.Jitendra Sulgekar");
                 break;
         }
     }
 
-    public void shwmsg(String title, String msg) {
+    public void shwmsg(String title, String msg)
+    {
         AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
         alertDialog.setCancelable(true);
         alertDialog.setTitle(title);
@@ -97,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         alertDialog.show();
 
     }
-    public void clearText(){
+    public void clearText()
+    {
         editRollno.setText("");
         editName.setText("");
         editMarks.setText("");
